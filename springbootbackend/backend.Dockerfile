@@ -3,11 +3,13 @@ FROM eclipse-temurin:21-jdk AS builder
 
 WORKDIR /app
 
-COPY mvnw .          
+COPY mvnw .
 COPY .mvn/ .mvn
 COPY pom.xml ./
-
 COPY src ./src
+
+# 👉 Fix: make mvnw executable
+RUN chmod +x mvnw
 
 RUN ./mvnw clean package -DskipTests
 
@@ -15,6 +17,7 @@ RUN ./mvnw clean package -DskipTests
 FROM eclipse-temurin:21-jdk
 
 WORKDIR /app
+
 COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 2000
